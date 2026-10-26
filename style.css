@@ -1,0 +1,92 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+header {
+  text-align: center;
+}
+
+main {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+  text-align: center;
+  color: gray;
+  font-size: 0.85rem;
+}
+
+#search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#word-input {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#search-form button {
+  padding: 0.6rem 1rem;
+  color: white;
+  background: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#search-form button:hover {
+  background: #2563eb;
+}
+
+#status {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.word-title {
+  color: #7c3aed;
+}
+
+.phonetic {
+  color: gray;
+  font-style: italic;
+}
+
+.part-of-speech {
+  font-style: italic;
+  color: #7c3aed;
+}
+
+.synonyms {
+  color: #10b981;
+}
+
+.audio-btn {
+  padding: 0.5rem 1rem;
+  color: white;
+  background: #10b981;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.audio-btn:hover {
+  background: #059669;
+}
+
+.hidden {
+  display: none;
+}
