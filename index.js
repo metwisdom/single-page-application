@@ -4,11 +4,17 @@ const status = document.getElementById("status");
 const result = document.getElementById("result");
 
 async function fetchWord(word) {
-  const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word;
+  const url =
+    "https://api.dictionaryapi.dev/api/v2/entries/en/" +
+    encodeURIComponent(word);
   const response = await fetch(url);
 
-  if (!response.ok) {
+  if (response.status === 404) {
     throw new Error("Word not found. Check your spelling.");
+  }
+
+  if (!response.ok) {
+    throw new Error("The dictionary service could not complete your search.");
   }
 
   return response.json();
@@ -19,32 +25,54 @@ function buildEntry(entry) {
     return p.audio;
   });
 
-  let html = '<div class="word-entry">';
-  html += '<h3 class="word-title">' + entry.word + '</h3>';
-  html += '<p class="phonetic">' + (entry.phonetic || "") + '</p>';
+  const article = document.createElement("article");
+  article.className = "word-entry";
+
+  const title = document.createElement("h3");
+  title.className = "word-title";
+  title.textContent = entry.word;
+  article.appendChild(title);
+
+  const phonetic = document.createElement("p");
+  phonetic.className = "phonetic";
+  phonetic.textContent = entry.phonetic || "";
+  article.appendChild(phonetic);
 
   if (audio) {
-    html += '<button class="audio-btn" onclick="playAudio(\'' + audio.audio + '\')">Play pronunciation</button>';
+    const audioButton = document.createElement("button");
+    audioButton.className = "audio-btn";
+    audioButton.type = "button";
+    audioButton.textContent = "Play pronunciation";
+    audioButton.addEventListener("click", function () {
+      playAudio(audio.audio);
+    });
+    article.appendChild(audioButton);
   }
 
   entry.meanings.forEach(function (meaning) {
-    html += '<p class="part-of-speech">' + meaning.partOfSpeech + '</p>';
-    html += '<ol class="definitions">';
+    const partOfSpeech = document.createElement("p");
+    partOfSpeech.className = "part-of-speech";
+    partOfSpeech.textContent = meaning.partOfSpeech;
+    article.appendChild(partOfSpeech);
 
+    const definitions = document.createElement("ol");
+    definitions.className = "definitions";
     meaning.definitions.forEach(function (def) {
-      html += '<li>' + def.definition + '</li>';
+      const definition = document.createElement("li");
+      definition.textContent = def.definition;
+      definitions.appendChild(definition);
     });
+    article.appendChild(definitions);
 
-    html += '</ol>';
-
-    const synonyms = meaning.synonyms;
-    if (synonyms.length > 0) {
-      html += '<p class="synonyms">Synonyms: ' + synonyms.join(", ") + '</p>';
+    if (meaning.synonyms.length > 0) {
+      const synonyms = document.createElement("p");
+      synonyms.className = "synonyms";
+      synonyms.textContent = "Synonyms: " + meaning.synonyms.join(", ");
+      article.appendChild(synonyms);
     }
   });
 
-  html += '</div>';
-  return html;
+  return article;
 }
 
 function playAudio(url) {
@@ -60,18 +88,18 @@ async function handleSearch(event) {
 
   status.textContent = "Loading...";
   status.style.color = "gray";
-  result.innerHTML = "";
+  result.replaceChildren();
 
   try {
     const entries = await fetchWord(word);
     status.textContent = "";
 
-    let html = "";
+    const entriesFragment = document.createDocumentFragment();
     entries.forEach(function (entry) {
-      html += buildEntry(entry);
+      entriesFragment.appendChild(buildEntry(entry));
     });
 
-    result.innerHTML = html;
+    result.replaceChildren(entriesFragment);
   } catch (error) {
     status.textContent = error.message;
     status.style.color = "red";
